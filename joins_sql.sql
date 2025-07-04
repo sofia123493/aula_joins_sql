@@ -79,7 +79,73 @@ FROM
 LEFT JOIN vendas ON livros.id = vendas.livro_id
 
 
+# INNER JOIN -> Só mostra os dados dos valores vinculados
+-- Listar todos os títulos dos livros e suas datas de vendas.
+SELECT
+	livros.titulo, vendas.data_venda
+FROM 
+	livros
+INNER JOIN vendas ON livros.id = vendas.livro_id;
 
+
+
+# LEFT JOIN -> Traz os dados vinculados e os não vinculados
+-- Listar todos os autores e os livros publicados (mesmo que não tenham escrito um livro)
+SELECT
+	autores.nome, livros.titulo
+FROM
+	autores
+LEFT JOIN livros ON autores.id = livros.autor_id;
+
+
+
+
+-- Com WHERE
+-- Lista os livros que não possuem autor cadastrado
+SELECT 
+	livros.titulo
+FROM livros
+LEFT JOIN autores ON livros.autor_id = livros.id
+WHERE autores.id IS NULL;
+
+-- Mostre os livros com a soma total de unicades vendidas
+SELECT 
+	livros.titulo, SUM(vendas.quantidade) AS total_vendas
+FROM 
+	livros
+LEFT JOIN vendas ON livros.id = vendas.livro_id
+GROUP BY livros.titulo;
+
+
+-- Liste os autores com livros já vendidos (sem repetir o autor) 
+
+SELECT DISTINCT
+	autores.nome
+FROM
+	autores
+INNER JOIN livros ON autores.id = livros.autor_id
+INNER JOIN vendas ON livros.id = vendas.livro_id;
+
+
+-- Liste os autores que não tiveram nenhum livro vendido
+SELECT
+	autores.nome
+FROM
+	autores
+LEFT JOIN livros ON autores.id = livros.autor_id
+LEFT JOIN vendas ON livros.id = vendas.livro_id
+GROUP BY autores.nome
+HAVING SUM(vendas.quantidade) IS NULL;
+
+-- Encontra o autor com o maior total de vendas
+SELECT
+	autores.nome, SUM(vendas.quantidade) AS total_vendas
+FROM
+ autores
+INNER JOIN livros ON autores.id = livros.autor_id 
+INNER JOIN vendas ON livros.id = vendas.livro_id
+GROUP BY autores.nome
+ORDER BY total_vendas;
 
 
 
